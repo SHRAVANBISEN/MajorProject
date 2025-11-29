@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.navigation:navigation-compose:2.7.5")
     val composeVersion = "1.5.0" // Latest stable Compose version
     val material3Version = "1.2.0" // Latest stable Material3 version
     implementation("androidx.compose.ui:ui:$composeVersion")
@@ -62,7 +63,8 @@ dependencies {
     implementation("androidx.compose.animation:animation:$composeVersion")
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.ai.client.generativeai:generativeai:0.1.1")
+    implementation("com.google.ai.client.generativeai:generativeai:0.1.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")

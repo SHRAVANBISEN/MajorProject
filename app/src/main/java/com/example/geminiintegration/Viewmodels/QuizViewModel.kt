@@ -3,7 +3,6 @@ package com.example.studentlearning.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.geminiintegration.DataModels.Quiz
-import com.example.geminiintegration.DataModels.QuizQuestion
 import com.example.geminiintegration.DataModels.QuizResult
 import com.example.geminiintegration.DataModels.StudyContent
 import com.example.geminiintegration.DataModels.UserProfile
@@ -53,21 +52,16 @@ class QuizViewModel : ViewModel() {
     fun selectAnswer(questionIndex: Int, answerIndex: Int) {
         currentQuiz?.let { quiz ->
             if (questionIndex in quiz.questions.indices) {
-                // Create a new list of questions with the updated selection
-                val updatedQuestions = quiz.questions.mapIndexed { index, question ->
-                    if (index == questionIndex) {
-                        // Create a new question object with updated selectedAnswerIndex
-                        question.copy(selectedAnswerIndex = answerIndex)
-                    } else {
-                        question
-                    }
+                // Create new list with updated question
+                val updatedQuestions = quiz.questions.toMutableList().apply {
+                    this[questionIndex] = this[questionIndex].copy(selectedAnswerIndex = answerIndex)
                 }
 
-                // Create a new Quiz object
+                // Create new Quiz object
                 val updatedQuiz = quiz.copy(questions = updatedQuestions)
                 currentQuiz = updatedQuiz
 
-                // Emit the new state to trigger recomposition
+                // Emit new state
                 _uiState.value = QuizUiState.QuizReady(updatedQuiz)
             }
         }
@@ -88,4 +82,10 @@ class QuizViewModel : ViewModel() {
     }
 
     fun getPassingPercentage(): Int = passingPercentage
+
+    // ADD THIS FUNCTION
+    fun resetViewModel() {
+        _uiState.value = QuizUiState.Initial
+        currentQuiz = null
+    }
 }

@@ -4,7 +4,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
 
 object GeminiHelper {
-    private const val API_KEY = "AIzaSyCHManL_NhbdMiBYT_vvMVRxnC3HWlce_E"
+    private const val API_KEY = "AIzaSyDJlhcmHj1xuvX6R1LjSSZXj9OnjRMsSf4"
 
     // Simple model without restrictive configs - like your chatbot
     private val model = GenerativeModel(

@@ -1,9 +1,7 @@
 package com.example.geminiintegration.Navigation
 
-
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,10 +10,7 @@ import com.example.geminiintegration.DataModels.StudyContent
 import com.example.geminiintegration.DataModels.UserProfile
 
 import com.example.studentlearning.ui.screens.*
-import com.example.studentlearning.ui.viewmodels.QuizUiState
-import com.example.studentlearning.ui.viewmodels.QuizViewModel
-import com.example.studentlearning.ui.viewmodels.StudyUiState
-import com.example.studentlearning.ui.viewmodels.StudyViewModel
+import com.example.studentlearning.ui.viewmodels.*
 
 sealed class Screen(val route: String) {
     object Onboarding : Screen("onboarding")
@@ -34,8 +29,19 @@ fun AppNavigation() {
     var currentQuizResult by remember { mutableStateOf<QuizResult?>(null) }
 
     // ViewModels that persist across navigation
+    val onboardingViewModel: OnboardingViewModel = viewModel()
     val studyViewModel: StudyViewModel = viewModel()
     val quizViewModel: QuizViewModel = viewModel()
+
+    // Function to reset everything
+    fun resetAllState() {
+        currentUserProfile = null
+        currentStudyContent = null
+        currentQuizResult = null
+        onboardingViewModel.resetForm()
+        studyViewModel.resetViewModel()
+        quizViewModel.resetViewModel()
+    }
 
     NavHost(
         navController = navController,
@@ -47,7 +53,8 @@ fun AppNavigation() {
                 onStartLearning = { userProfile ->
                     currentUserProfile = userProfile
                     navController.navigate(Screen.StudyContent.route)
-                }
+                },
+                viewModel = onboardingViewModel
             )
         }
 
@@ -70,6 +77,7 @@ fun AppNavigation() {
                         navController.navigate(Screen.Quiz.route)
                     },
                     onBackToHome = {
+                        resetAllState()
                         navController.popBackStack(Screen.Onboarding.route, inclusive = false)
                     },
                     viewModel = studyViewModel
@@ -110,22 +118,21 @@ fun AppNavigation() {
                     ResultScreen(
                         quizResult = result,
                         onRetryWithSimplifiedContent = {
+                            // Reset quiz only (keep study content profile)
+                            quizViewModel.resetViewModel()
                             // Regenerate content with increased attempt number
                             studyViewModel.regenerateContent()
                             navController.popBackStack(Screen.StudyContent.route, inclusive = false)
                         },
-                        onBackToHome = {
-                            // Reset all state
-                            currentUserProfile = null
-                            currentStudyContent = null
-                            currentQuizResult = null
+                        onBackToHome = { shouldReset ->
+                            if (shouldReset) {
+                                resetAllState()
+                            }
                             navController.popBackStack(Screen.Onboarding.route, inclusive = false)
                         },
                         onNextTopic = {
-                            // For now, go back to home to select new topic
-                            currentUserProfile = null
-                            currentStudyContent = null
-                            currentQuizResult = null
+                            // Reset everything for new topic
+                            resetAllState()
                             navController.popBackStack(Screen.Onboarding.route, inclusive = false)
                         }
                     )

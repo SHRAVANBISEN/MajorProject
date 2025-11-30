@@ -56,4 +56,11 @@ class StudyViewModel : ViewModel() {
     }
 
     fun getAttemptNumber(): Int = attemptNumber
+
+    // ADD THIS FUNCTION
+    fun resetViewModel() {
+        _uiState.value = StudyUiState.Initial
+        currentUserProfile = null
+        attemptNumber = 1
+    }
 }
